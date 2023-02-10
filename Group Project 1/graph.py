@@ -81,6 +81,7 @@ class GraphProblem(Problem):
         return action
 
     def path_cost(self, cost_so_far, A, action, B):
+        """The path cost will be the current cost + the link distance"""
         return cost_so_far + (self.graph.get(A, B) or np.inf)
 
     def find_min_edge(self):

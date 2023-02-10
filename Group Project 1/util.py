@@ -39,13 +39,6 @@ def distance(a, b):
     return np.hypot((xA - xB), (yA - yB))
 
 
-def distance_squared(a, b):
-    """The square of the distance between two (x, y) points."""
-    xA, yA = a
-    xB, yB = b
-    return (xA - xB) ** 2 + (yA - yB) ** 2
-
-
 class PriorityQueue:
     """A Queue in which the minimum (or maximum) element (as determined by f and
     order) is returned first.
