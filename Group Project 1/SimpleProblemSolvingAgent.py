@@ -14,10 +14,12 @@ class SimpleProblemSolvingAgent:
     Abstract framework for a problem-solving agent.
     """
 
-    def __init__(self, initial_state=None, search_type="best"):
+    def __init__(self, initial_state=None, search_type=best_first_graph_search):
         """State is an abstract representation of the state
         of the world, and seq is the list of actions required
-        to get to a particular state from the initial state(root)."""
+        to get to a particular state from the initial state(root).
+        Search_type is the type of search we want to perform. This
+        can be changed after initialization."""
         self.state = initial_state
         self.seq = []
         self.search_type = search_type
@@ -44,18 +46,11 @@ class SimpleProblemSolvingAgent:
         raise NotImplementedError
 
     def search(self, problem):
-        if self.search_type == "best":
-            return self.best_first_search(problem)
-        elif self.search_type == "astar":
-            return self.astar_search(problem)
-        else:
-            raise NotImplementedError
+        return self.search_type(problem)
 
     def set_search_type(self, search_type):
-        self.search_type = search_type
-
-    def best_first_search(self, problem):
-        raise NotImplementedError
-
-    def astar_search(self, problem):
-        raise NotImplementedError
+        if (search_type == best_first_graph_search or search_type == astar_search):
+            self.search_type = search_type
+        else:
+            raise NotImplementedError
+        
