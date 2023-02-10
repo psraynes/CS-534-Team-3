@@ -2,6 +2,7 @@
 # Majority of this code is pulled from the Artificial Intelligence: A Modern Approach reference code
 # Repo located at https://github.com/aimacode/aima-python
 
+
 class Graph:
     """A graph connects nodes (vertices) by edges (links). Each edge can also
     have a length associated with it. The constructor call is something like:
@@ -60,6 +61,7 @@ class Graph:
 def UndirectedGraph(graph_dict=None):
     """Build a Graph where every edge (including future ones) goes both ways."""
     return Graph(graph_dict=graph_dict, directed=False)
+
 
 # Romania map represented as a graph.
 # TODO: Move into separate file, make more human readable and create a parser
