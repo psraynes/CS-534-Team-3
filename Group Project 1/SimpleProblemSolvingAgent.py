@@ -69,7 +69,11 @@ class SimpleProblemSolvingAgent:
         self.seq = []
         
     def total_path_cost(self):
-        # Return the total path cost. Each node contains the path cost to get to them, so read that value from the last node
-        total_cost = 0            
-        return total_cost
+        # Return the total path cost.
+        if self.seq:
+            # Each node contains the path cost to get to them, so read that value from the last node
+            return self.seq[-1].path_cost          
+        else:
+            # There is no path found, so return 0
+            return 0
         
