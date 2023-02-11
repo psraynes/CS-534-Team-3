@@ -4,8 +4,8 @@
 # Basic architecture taken from Artificial Intelligence: A Modern Approach reference code
 # Repo located at https://github.com/aimacode/aima-python
 
-from graph import Graph, UndirectedGraph, Node
-from search import best_first_graph_search, astar_search
+from graph import Graph, UndirectedGraph
+from search import best_first_graph_search, astar_search, Node
 
 
 class SimpleProblemSolvingAgent:
@@ -49,7 +49,7 @@ class SimpleProblemSolvingAgent:
 
     def search(self, problem):
         results = self.search_type(problem, problem.h)
-         # Result will be a Node representing the end of the path or None if no path
+        # Result will be a Node representing the end of the path or None if no path
         if results is None:
             return None
         else:
@@ -57,9 +57,8 @@ class SimpleProblemSolvingAgent:
             for result in results.path():
                 path.append(result)
 
-
     def set_search_type(self, search_type):
-        if (search_type == best_first_graph_search or search_type == astar_search):
+        if search_type == best_first_graph_search or search_type == astar_search:
             self.search_type = search_type
         else:
             raise NotImplementedError
