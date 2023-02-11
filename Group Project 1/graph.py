@@ -103,6 +103,9 @@ class GraphProblem(Problem):
             return int(distance(locs[node.state], locs[self.goal]))
         else:
             return np.inf
+    
+    def value(self, state):
+        return self.h(state)
 
 
 # Romania map represented as a graph.
