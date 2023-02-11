@@ -26,27 +26,27 @@ class SimpleProblemSolvingAgent:
     def __call__(self, percept):
         """Formulate a goal and problem, then search for a sequence of actions
         to solve it. Returns a list of locations representing the path"""
-        self.state = self.update_state(self.state, percept)
+        self.update_state(percept)
         if not self.seq:
-            goal = self.formulate_goal(self.state)
-            problem = self.formulate_problem(self.state, goal)
+            self.formulate_goal()
+            problem = self.formulate_problem()
             self.seq = self.search(problem)
             if not self.seq:
                 return None
         return self.seq
 
-    def update_state(self, state, percept):
+    def update_state(self, percept):
         # For our use case, this will be setting the goal of the search
-        state["goal"] = percept
-        return state
+        self.state["goal"] = percept
+        return self.state
 
-    def formulate_goal(self, state):
+    def formulate_goal(self):
         # For our use case, this will be reading the goal of the search
-        return state.get("goal")
+        return self.state.get("goal")
 
-    def formulate_problem(self, state, goal):
+    def formulate_problem(self):
         # Problem created combines all the previous information and passes it all to the searches
-        problem = GraphProblem(state.get("initial"), goal, state.get("graph"))
+        problem = GraphProblem(self.state.get("initial"), self.goal, self.state.get("graph"))
         return problem
 
     def search(self, problem):
