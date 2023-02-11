@@ -14,13 +14,12 @@ class SimpleProblemSolvingAgent:
     be a graph searching agent.
     """
 
-    def __init__(self, graph, initial_state=None, search_type=best_first_graph_search):
-        """State is a dictionary containing the current and goal locations in the graph,
+    def __init__(self, initial_state=None, search_type=best_first_graph_search):
+        """State is a dictionary containing the graph, the current and the goal locations in the graph,
         seq is the list of locations required to get to a particular state from the initial
         state(root). Search_type is the type of search we want to perform. This
         can be changed after initialization."""
-        self.graph = graph
-        self.state = {"initial": initial_state}
+        self.state = initial_state
         self.seq = []
         self.search_type = search_type
 
@@ -43,11 +42,11 @@ class SimpleProblemSolvingAgent:
 
     def formulate_goal(self, state):
         # For our use case, this will be reading the goal of the search
-        return self.state.get("goal")
+        return state.get("goal")
 
     def formulate_problem(self, state, goal):
         # Problem created here will be a GraphProblem
-        problem = GraphProblem(state.get("initial"), goal, self.graph)
+        problem = GraphProblem(state.get("initial"), goal, state.get("graph"))
         return problem
 
     def search(self, problem):
