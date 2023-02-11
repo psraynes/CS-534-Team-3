@@ -50,7 +50,7 @@ class SimpleProblemSolvingAgent:
         return problem
 
     def search(self, problem):
-        results = self.search_type(problem, problem.h, True)
+        results = self.search_type(problem, problem.h)
         # Result will be a list of Nodes representing the path or None if no path
         if results is None:
             return None

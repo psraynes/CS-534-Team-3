@@ -17,7 +17,8 @@ def main():
     best_first_path = spsa(destination_city)
     print(best_first_path)
 
-    # Change to A* search and call it
+    # Reset the sequence in the SPSA, Change to A* search and call it
+    spsa.reset()
     spsa.set_search_type(astar_search)
     astar_path = spsa(destination_city)
     print(astar_path)
