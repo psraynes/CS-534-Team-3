@@ -4,7 +4,7 @@
 # Basic architecture taken from Artificial Intelligence: A Modern Approach reference code
 # Repo located at https://github.com/aimacode/aima-python
 
-from graph import Graph, UndirectedGraph
+from graph import Graph, UndirectedGraph, GraphProblem
 from search import best_first_graph_search, astar_search, Node
 
 
@@ -14,13 +14,13 @@ class SimpleProblemSolvingAgent:
     be a graph searching agent.
     """
 
-    def __init__(self, initial_state={}, search_type=best_first_graph_search):
+    def __init__(self, graph, initial_state=None, search_type=best_first_graph_search):
         """State is a dictionary containing the current and goal locations in the graph,
         seq is the list of locations required to get to a particular state from the initial
         state(root). Search_type is the type of search we want to perform. This
         can be changed after initialization."""
-        self.goal = None
-        self.state = initial_state
+        self.graph = graph
+        self.state = {"initial": initial_state}
         self.seq = []
         self.search_type = search_type
 
@@ -38,17 +38,17 @@ class SimpleProblemSolvingAgent:
 
     def update_state(self, state, percept):
         # For our use case, this will be setting the goal of the search
-        self.state = state
-        self.goal = percept
+        state["goal"] = percept
         return state
 
     def formulate_goal(self, state):
         # For our use case, this will be reading the goal of the search
-        return self.goal
+        return self.state.get("goal")
 
     def formulate_problem(self, state, goal):
         # Problem created here will be a GraphProblem
-        raise NotImplementedError
+        problem = GraphProblem(state.get("initial"), goal, self.graph)
+        return problem
 
     def search(self, problem):
         results = self.search_type(problem, problem.h)
@@ -59,6 +59,7 @@ class SimpleProblemSolvingAgent:
             path = []
             for result in results.path():
                 path.append(result)
+            return path
 
     def set_search_type(self, search_type):
         if search_type == best_first_graph_search or search_type == astar_search:
