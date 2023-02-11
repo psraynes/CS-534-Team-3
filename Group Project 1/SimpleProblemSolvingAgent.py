@@ -45,13 +45,13 @@ class SimpleProblemSolvingAgent:
         return state.get("goal")
 
     def formulate_problem(self, state, goal):
-        # Problem created here will be a GraphProblem
+        # Problem created combines all the previous information and passes it all to the searches
         problem = GraphProblem(state.get("initial"), goal, state.get("graph"))
         return problem
 
     def search(self, problem):
-        results = self.search_type(problem, problem.h)
-        # Result will be a Node representing the end of the path or None if no path
+        results = self.search_type(problem, problem.h, True)
+        # Result will be a list of Nodes representing the path or None if no path
         if results is None:
             return None
         else:
@@ -64,5 +64,6 @@ class SimpleProblemSolvingAgent:
         if search_type == best_first_graph_search or search_type == astar_search:
             self.search_type = search_type
         else:
+            # We only have Best-First and A* implemented. Any other search type would cause errors
             raise NotImplementedError
         
