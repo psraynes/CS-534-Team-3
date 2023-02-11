@@ -42,11 +42,11 @@ class SimpleProblemSolvingAgent:
 
     def formulate_goal(self, state):
         # For our use case, this will be reading the goal of the search
-        return self.state.get("goal")
+        return state.get("goal")
 
     def formulate_problem(self, state, goal):
         # Problem created here will be a GraphProblem
-        problem = GraphProblem(state.get("initial"), goal, self.graph)
+        problem = GraphProblem(state.get("initial"), goal, state.get("graph"))
         return problem
 
     def search(self, problem):
