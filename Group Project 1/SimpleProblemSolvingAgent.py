@@ -48,7 +48,7 @@ class SimpleProblemSolvingAgent:
         raise NotImplementedError
 
     def search(self, problem):
-        results = self.search_type(problem.h, problem)
+        results = self.search_type(problem, problem.h)
          # Result will be a Node representing the end of the path or None if no path
         if results is None:
             return None
