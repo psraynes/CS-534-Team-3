@@ -19,6 +19,7 @@ class SimpleProblemSolvingAgent:
         of locations required to get to a particular state from the initial
         state(root). Search_type is the type of search we want to perform. This
         can be changed after initialization."""
+        self.goal = None
         self.state = initial_state
         self.seq = []
         self.search_type = search_type
@@ -37,11 +38,13 @@ class SimpleProblemSolvingAgent:
 
     def update_state(self, state, percept):
         # For our use case, this will be setting the goal of the search
-        raise NotImplementedError
+        self.state = state
+        self.goal = percept
+        return state
 
     def formulate_goal(self, state):
         # For our use case, this will be reading the goal of the search
-        raise NotImplementedError
+        return self.goal
 
     def formulate_problem(self, state, goal):
         # Problem created here will be a GraphProblem
