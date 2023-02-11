@@ -46,7 +46,7 @@ class SimpleProblemSolvingAgent:
 
     def formulate_problem(self):
         # Problem created combines all the previous information and passes it all to the searches
-        problem = GraphProblem(self.state.get("initial"), self.goal, self.state.get("graph"))
+        problem = GraphProblem(self.state.get("initial"), self.state.get("goal"), self.state.get("graph"))
         return problem
 
     def search(self, problem):
