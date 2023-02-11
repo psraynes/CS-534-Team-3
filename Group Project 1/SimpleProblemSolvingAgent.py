@@ -55,10 +55,7 @@ class SimpleProblemSolvingAgent:
         if results is None:
             return None
         else:
-            path = []
-            for result in results.path():
-                path.append(result)
-            return path
+            return results.path()
 
     def set_search_type(self, search_type):
         if search_type == best_first_graph_search or search_type == astar_search:
@@ -70,4 +67,13 @@ class SimpleProblemSolvingAgent:
     def reset(self):
         # Reset the current sequence to start fresh
         self.seq = []
+        
+    def total_path_cost(self):
+        # Return the total path cost.
+        if self.seq:
+            # Each node contains the path cost to get to them, so read that value from the last node
+            return self.seq[-1].path_cost          
+        else:
+            # There is no path found, so return 0
+            return 0
         
