@@ -66,4 +66,8 @@ class SimpleProblemSolvingAgent:
         else:
             # We only have Best-First and A* implemented. Any other search type would cause errors
             raise NotImplementedError
+    
+    def reset(self):
+        # Reset the current sequence to start fresh
+        self.seq = []
         
