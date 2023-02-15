@@ -1,19 +1,23 @@
 # Main Romania City App
 
 from SimpleProblemSolvingAgent import SimpleProblemSolvingAgent, astar_search
-from graph import romania_map
-
+from graph import loadGraphFromFile
 
 def main():
-    # Load map from text file here
+    # Ask the user for the location of the map text file and then load it
+    map_file = input("Please enter the file location of a map.txt file: ")
+    loaded_map = loadGraphFromFile(map_file)
+    
     while True:
+        # Reading the inputs from the user is done in a while loop to allow us to 
+        # ask them to correct any invalid data
         while True:
             # Read the cities from the user, and determines if they are valid
             while True:
                 starting_city = input("Please enter the name of your starting city: ")
                 
                 # Starting city is valid if it exists on our map
-                if starting_city not in romania_map.locations:
+                if starting_city not in loaded_map.locations:
                     print("Your starting city does not exist, please check your spelling.")
                     continue
                 else:
@@ -23,7 +27,7 @@ def main():
                 destination_city = input("Please enter the name of your desired destination city: ")
                 
                 # Destination city is valid if it exists on our map
-                if destination_city not in romania_map.locations:
+                if destination_city not in loaded_map.locations:
                     print("Your destination city does not exist, please check your spelling.")
                     continue
                 else:
@@ -38,7 +42,7 @@ def main():
         print("\n")
         
         # Create the SPSA object from the map loaded earlier and the starting city
-        state_dict = {"graph": romania_map, "initial": starting_city}
+        state_dict = {"graph": loaded_map, "initial": starting_city}
         spsa = SimpleProblemSolvingAgent(state_dict)
 
         # By default, the SPSA object uses best-first search. Call it by passing the destination
@@ -56,6 +60,7 @@ def main():
         # Query if the user wants to keep searching this map
         want_to_go_again = input("Would you like to continue to search the map? Y/N: ")
         if want_to_go_again.casefold() == "y":
+            # If they do, we restart this loop
             continue
         else:
             print("Thank You for Using Our App!")

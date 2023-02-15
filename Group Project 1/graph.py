@@ -168,8 +168,7 @@ def loadGraphFromFile(file_path):
     return return_graph
 
 
-# Romania map represented as a graph.
-# TODO: Move into separate file, make more human readable and create a parser
+# Romania map represented as a graph. Used as reference data
 romania_map = UndirectedGraph(dict(
     Arad=dict(Zerind=75, Sibiu=140, Timisoara=118),
     Bucharest=dict(Urziceni=85, Pitesti=101, Giurgiu=90, Fagaras=211),
