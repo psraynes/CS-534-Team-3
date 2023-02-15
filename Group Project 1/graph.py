@@ -150,7 +150,7 @@ def loadGraphFromFile(file_path):
             split_path_data = split(r"(\w+)(?:,(\w+))?\s*=\s*(\d+)", line)
             
             if len(split_path_data) == 5:
-                return_graph.connect(split_path_data[1], split_path_data[2], split_path_data[3])
+                return_graph.connect(split_path_data[1], split_path_data[2], int(split_path_data[3]))
                 
             else:
                 # The split call is exptected to return a list containing exactly 5 elements:
