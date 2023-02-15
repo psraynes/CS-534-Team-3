@@ -3,6 +3,7 @@
 # Repo located at https://github.com/aimacode/aima-python
 
 from util import *
+from re import split
 
 
 class Graph:
@@ -106,6 +107,65 @@ class GraphProblem(Problem):
     
     def value(self, state):
         return self.h(state)
+
+
+def loadGraphFromFile(file_path):
+    file = open(file_path,'r')
+    
+    section_header = ""
+    location_dict = {}
+    # We assume for now that the paths are bidirectional, making this an undirected graph
+    return_graph = UndirectedGraph()
+    
+    for line in file:
+        if line.endswith(':\n'):
+            # Lines that end with : are section headers and determine how we process the next section
+            # Strip the last 2 characters (:\n) and treat that as our section header
+            section_header = line[:-2]
+            
+        elif line.isspace():
+            # We ignore empty lines
+            continue
+        
+        elif section_header == "Locations":
+            # These are the locations and their coordinates, store them in a dict
+            # This Regex matches anything in the form "text = (number,number)"
+            # The split call will return a list containing the text and two numbers
+            split_location_data = split(r"(\w+)\s*=\s*\((\d+),(\d+)\)", line)
+            
+            if len(split_location_data) == 5:
+                location_dict[split_location_data[1]] = (int(split_location_data[2]), int(split_location_data[3]))
+                
+            else:
+                # The split call is exptected to return a list containing exactly 5 elements:
+                # And empty string, the location name, the X coordinate, the Y coordinate, a second empty string
+                # Anything else is malformed
+                print("ERROR Loading File, Malformed Location: " + line)
+                break
+            
+        elif section_header == "Paths":
+            # These are the paths between locations, add them directly to the graph
+            # This Regex matches anything in the form "text,text = number"
+            # The split call will return a list containing the two texts and a number
+            split_path_data = split(r"(\w+)(?:,(\w+))?\s*=\s*(\d+)", line)
+            
+            if len(split_path_data) == 5:
+                return_graph.connect(split_path_data[1], split_path_data[2], split_path_data[3])
+                
+            else:
+                # The split call is exptected to return a list containing exactly 5 elements:
+                # And empty string, the first location, the second location, the distance, a second empty string
+                # Anything else is malformed
+                print("ERROR Loading File, Malformed Path: " + line)
+                break
+        
+        else:
+            print("ERROR Loading File, Unrecognized Section Header: " + section_header)
+            break
+            
+    return_graph.locations = location_dict
+    
+    return return_graph
 
 
 # Romania map represented as a graph.
