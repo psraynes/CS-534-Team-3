@@ -4,9 +4,20 @@ from SimpleProblemSolvingAgent import SimpleProblemSolvingAgent, astar_search
 from graph import loadGraphFromFile
 
 def main():
-    # Ask the user for the location of the map text file and then load it
-    map_file = input("Please enter the file location of a map.txt file: ")
-    loaded_map = loadGraphFromFile(map_file)
+    
+    load_successful = False
+    while not load_successful:
+        # Ask the user for the location of the map text file and then load it
+        # Performed in a loop to verify that the user has provided a valid file
+        map_file = input("Please enter the file location of a map.txt file: ")
+        try:
+            loaded_map = loadGraphFromFile(map_file)
+        except FileNotFoundError:
+            print("""The provided file does not exist, please double check your spelling and try again.
+If the problem persists, verify that you have the correct file path.
+""")
+        else:
+            load_successful = True
     
     while True:
         # Reading the inputs from the user is done in a while loop to allow us to 
