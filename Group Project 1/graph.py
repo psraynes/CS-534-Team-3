@@ -2,6 +2,10 @@
 # Majority of this code is pulled from the Artificial Intelligence: A Modern Approach reference code
 # Repo located at https://github.com/aimacode/aima-python
 
+from util import *
+from re import split
+
+
 class Graph:
     """A graph connects nodes (vertices) by edges (links). Each edge can also
     have a length associated with it. The constructor call is something like:
@@ -61,8 +65,110 @@ def UndirectedGraph(graph_dict=None):
     """Build a Graph where every edge (including future ones) goes both ways."""
     return Graph(graph_dict=graph_dict, directed=False)
 
-# Romania map represented as a graph.
-# TODO: Move into separate file, make more human readable and create a parser
+
+class GraphProblem(Problem):
+    """The problem of searching a graph from one node to another."""
+
+    def __init__(self, initial, goal, graph):
+        super().__init__(initial, goal)
+        self.graph = graph
+
+    def actions(self, A):
+        """The actions at a graph node are just its neighbors."""
+        return list(self.graph.get(A).keys())
+
+    def result(self, state, action):
+        """The result of going to a neighbor is just that neighbor."""
+        return action
+
+    def path_cost(self, cost_so_far, A, action, B):
+        """The path cost will be the current cost + the link distance"""
+        return cost_so_far + (self.graph.get(A, B) or np.inf)
+
+    def find_min_edge(self):
+        """Find minimum value of edges."""
+        m = np.inf
+        for d in self.graph.graph_dict.values():
+            local_min = min(d.values())
+            m = min(m, local_min)
+
+        return m
+
+    def h(self, node):
+        """h function is straight-line distance from a node's state to goal."""
+        locs = getattr(self.graph, 'locations', None)
+        if locs:
+            if type(node) is str:
+                return int(distance(locs[node], locs[self.goal]))
+
+            return int(distance(locs[node.state], locs[self.goal]))
+        else:
+            return np.inf
+    
+    def value(self, state):
+        return self.h(state)
+
+
+def loadGraphFromFile(file_path):
+    file = open(file_path,'r')
+    
+    section_header = ""
+    location_dict = {}
+    # We assume for now that the paths are bidirectional, making this an undirected graph
+    return_graph = UndirectedGraph()
+    
+    for line in file:
+        if line.endswith(':\n'):
+            # Lines that end with : are section headers and determine how we process the next section
+            # Strip the last 2 characters (:\n) and treat that as our section header
+            section_header = line[:-2]
+            
+        elif line.isspace():
+            # We ignore empty lines
+            continue
+        
+        elif section_header == "Locations":
+            # These are the locations and their coordinates, store them in a dict
+            # This Regex matches anything in the form "text = (number,number)"
+            # The split call will return a list containing the text and two numbers
+            split_location_data = split(r"(\w+)\s*=\s*\((\d+),(\d+)\)", line)
+            
+            if len(split_location_data) == 5:
+                location_dict[split_location_data[1]] = (int(split_location_data[2]), int(split_location_data[3]))
+                
+            else:
+                # The split call is exptected to return a list containing exactly 5 elements:
+                # And empty string, the location name, the X coordinate, the Y coordinate, a second empty string
+                # Anything else is malformed
+                print("ERROR Loading File, Malformed Location: " + line)
+                break
+            
+        elif section_header == "Paths":
+            # These are the paths between locations, add them directly to the graph
+            # This Regex matches anything in the form "text,text = number"
+            # The split call will return a list containing the two texts and a number
+            split_path_data = split(r"(\w+)(?:,(\w+))?\s*=\s*(\d+)", line)
+            
+            if len(split_path_data) == 5:
+                return_graph.connect(split_path_data[1], split_path_data[2], int(split_path_data[3]))
+                
+            else:
+                # The split call is exptected to return a list containing exactly 5 elements:
+                # And empty string, the first location, the second location, the distance, a second empty string
+                # Anything else is malformed
+                print("ERROR Loading File, Malformed Path: " + line)
+                break
+        
+        else:
+            print("ERROR Loading File, Unrecognized Section Header: " + section_header)
+            break
+            
+    return_graph.locations = location_dict
+    
+    return return_graph
+
+
+# Romania map represented as a graph. Used as reference data
 romania_map = UndirectedGraph(dict(
     Arad=dict(Zerind=75, Sibiu=140, Timisoara=118),
     Bucharest=dict(Urziceni=85, Pitesti=101, Giurgiu=90, Fagaras=211),
