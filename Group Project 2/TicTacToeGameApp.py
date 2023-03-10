@@ -12,17 +12,20 @@ def main():
         
         # TODO: Verify that the input size is valid aka numbers and >3
         
+        print()
+        
         # Create the TicTacToe object
         ttt = TicTacToe(int(size_list[0]), int(size_list[1]))
         result = ttt.play_game(random_player, random_player)
         
         # Display Results
+        print()
         if result == 1:
-            print("X Wins!")
+            print("X Wins!\n")
         elif result == -1:
-            print("O Wins!")
+            print("O Wins!\n")
         else:
-            print("Draw!")
+            print("Draw!\n")
         
         # Query if the user wants to keep searching this map
         want_to_go_again = input("Would you like to continue to play Tic-Tac-Toe? Y/N: ")
