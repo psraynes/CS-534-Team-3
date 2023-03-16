@@ -17,8 +17,8 @@ def main():
 2) User
 3) Min Max Search
 4) Alpha Beta Search""")
-        player_O = input("Please select the player type for O:")
         player_X = input("Please select the player type for X:")
+        player_O = input("Please select the player type for O:")
         
         player_types = [random_player, query_player, min_max_player, alpha_beta_player]
         
@@ -29,7 +29,7 @@ def main():
         # Create the TicTacToe object
         # The size and player types are specified by the user
         ttt = TicTacToe(int(size_list[0]), int(size_list[1]))
-        result = ttt.play_game(player_types[int(player_O) - 1], player_types[int(player_X) - 1])
+        result = ttt.play_game(player_types[int(player_X) - 1], player_types[int(player_O) - 1])
         
         # Display Results
         print()

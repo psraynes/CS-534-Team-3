@@ -51,8 +51,8 @@ class Game:
         while True:
             for player in players:
                 move = player(self, state)
-                state = self.result(state, move)
                 print("Player " + state.to_move + " move: " + str(move))
+                state = self.result(state, move)
                 self.display(state)
                 print()
                 if self.terminal_test(state):
