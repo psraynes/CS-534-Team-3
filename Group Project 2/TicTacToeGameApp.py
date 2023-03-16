@@ -1,7 +1,7 @@
 # Main TicTacToe App
 
 from TicTacToeClass import TicTacToe
-from game import random_player, query_player
+from game import random_player, query_player, min_max_player, alpha_beta_player
 
 
 def main():
@@ -12,11 +12,24 @@ def main():
         
         # TODO: Verify that the input size is valid aka numbers and >3
         
+        print("""Player Types:
+1) Random
+2) User
+3) Min Max Search
+4) Alpha Beta Search""")
+        player_O = input("Please select the player type for O:")
+        player_X = input("Please select the player type for X:")
+        
+        player_types = [random_player, query_player, min_max_player, alpha_beta_player]
+        
+        # TODO: Verify that the input player types are valid aka numbers and 1-4
+        
         print()
         
         # Create the TicTacToe object
+        # The size and player types are specified by the user
         ttt = TicTacToe(int(size_list[0]), int(size_list[1]))
-        result = ttt.play_game(random_player, random_player)
+        result = ttt.play_game(player_types[int(player_O) - 1], player_types[int(player_X) - 1])
         
         # Display Results
         print()

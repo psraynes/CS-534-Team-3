@@ -87,8 +87,8 @@ def alpha_beta_player(game: Game, state: GameState):
     return alpha_beta_search(state, game)
 
 
-def expect_min_max_player(game: Game, state: GameState):
-    return expect_minmax(state, game)
+def min_max_player(game: Game, state: GameState):
+    return minmax_decision(state, game)
 
 
 # Searches
@@ -116,46 +116,6 @@ def minmax_decision(state: GameState, game: Game):
 
     # Body of minmax_decision:
     return max(game.actions(state), key=lambda a: min_value(game.result(state, a)))
-
-
-def expect_minmax(state: GameState, game: Game):
-    """
-    [Figure 5.11]
-    Return the best move for a player after dice are thrown. The game tree
-	includes chance nodes along with min and max nodes.
-	"""
-    player = game.to_move(state)
-
-    def max_value(state: GameState):
-        v = -np.inf
-        for a in game.actions(state):
-            v = max(v, chance_node(state, a))
-        return v
-
-    def min_value(state: GameState):
-        v = np.inf
-        for a in game.actions(state):
-            v = min(v, chance_node(state, a))
-        return v
-
-    def chance_node(state: GameState, action):
-        res_state = game.result(state, action)
-        if game.terminal_test(res_state):
-            return game.utility(res_state, player)
-        sum_chances = 0
-        num_chances = len(game.chances(res_state))
-        for chance in game.chances(res_state):
-            res_state = game.outcome(res_state, chance)
-            util = 0
-            if res_state.to_move == player:
-                util = max_value(res_state)
-            else:
-                util = min_value(res_state)
-            sum_chances += util * game.probability(chance)
-        return sum_chances / num_chances
-
-    # Body of expect_min_max:
-    return max(game.actions(state), key=lambda a: chance_node(state, a), default=None)
 
 
 def alpha_beta_search(state: GameState, game: Game):
