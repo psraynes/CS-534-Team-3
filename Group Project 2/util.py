@@ -151,6 +151,11 @@ class Problem:
 identity = lambda x: x
 
 
+def argmin_random_tie(seq, key=identity):
+    """Return a minimum element of seq; break ties at random."""
+    return min(shuffled(seq), key=key)
+
+
 def argmax_random_tie(seq, key=identity):
     """Return an element with highest fn(seq[i]) score; break ties at random."""
     return max(shuffled(seq), key=key)
