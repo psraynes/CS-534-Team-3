@@ -111,22 +111,26 @@ def astar_search(problem, h=None, display=False):
     return best_first_graph_search(problem, lambda n: n.path_cost + h(n), display)
 
 
-def hill_climbing(problem):
+def hill_climbing(problem, h=None, display=False):
     """
     [Figure 4.2]
     From the initial node, keep choosing the neighbor with highest value,
     stopping when no neighbor is better.
     """
-    node = Node(problem.initial)
+    current = Node(problem.initial)
+    path = []
     while True:
-        neighbors = node.expand(problem)
+        neighbors = current.expand(problem)
         if not neighbors:
             break
         neighbor = argmax_random_tie(neighbors, key=lambda node: problem.value(node.state))
-        if problem.value(neighbor.state) <= problem.value(node.state):
+        if problem.value(neighbor.state) <= problem.value(current.state):
             break
-        node = neighbor
-    return node.state
+        current = neighbor
+        path += [current]
+        # print(current.state)
+    # Todo: Fix this to return correct type
+    return path
 
 
 def exp_schedule(k=20, lam=0.005, limit=100):
@@ -134,7 +138,7 @@ def exp_schedule(k=20, lam=0.005, limit=100):
     return lambda t: (k * np.exp(-lam * t) if t < limit else 0)
 
 
-def simulated_annealing(problem, schedule=exp_schedule()):
+def simulated_annealing(problem, h=None,  schedule=exp_schedule(), display=False):
     """[Figure 4.5] CAUTION: This differs from the pseudocode as it
     returns a state instead of a Node."""
     node = Node(problem.initial)
