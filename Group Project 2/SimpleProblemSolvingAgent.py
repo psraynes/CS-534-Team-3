@@ -5,7 +5,7 @@
 # Repo located at https://github.com/aimacode/aima-python
 
 from graph import Graph, UndirectedGraph, GraphProblem
-from search import best_first_graph_search, astar_search, Node, hill_climbing, simulated_annealing
+from search import best_first_graph_search, astar_search, Node, hill_climbing, simulated_annealing, exp_schedule
 
 
 class SimpleProblemSolvingAgent:
@@ -49,8 +49,16 @@ class SimpleProblemSolvingAgent:
         problem = GraphProblem(self.state.get("initial"), self.state.get("goal"), self.state.get("graph"))
         return problem
 
-    def search(self, problem):
-        results = self.search_type(problem, problem.h)
+    def search(self, problem, search_type):
+        # Logic for defining results based on problem.
+        if search_type in [best_first_graph_search, astar_search]:
+            results = self.search_type(problem, problem.h)
+        # Hill climbing search only takes the problem
+        elif search_type in [hill_climbing]:
+            results = self.search_type(problem)
+        # Simulated annealing requires a training schedule
+        elif search_type in [simulated_annealing]:
+            results = self.search_type(problem, schedule=exp_schedule())
         # Result will be a list of Nodes representing the path or None if no path
         if results is None:
             return None
