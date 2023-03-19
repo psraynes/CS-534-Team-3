@@ -58,10 +58,13 @@ class SimpleProblemSolvingAgent:
             return results.path()
 
     def set_search_type(self, search_type):
-        if search_type == best_first_graph_search or search_type == astar_search:
+        # Added hill_climbing and simulated_annealing
+        if (search_type == best_first_graph_search or search_type == astar_search
+                or search_type == hill_climbing or search_type == simulated_annealing):
             self.search_type = search_type
         else:
-            # We only have Best-First and A* implemented. Any other search type would cause errors
+            # We only have Best-First,A* implemented, Hill Climbing, and
+            # Simulated Annealing. Any other search type would cause errors
             raise NotImplementedError
     
     def reset(self):
