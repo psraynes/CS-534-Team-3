@@ -5,7 +5,7 @@
 # Repo located at https://github.com/aimacode/aima-python
 
 from graph import Graph, UndirectedGraph, GraphProblem
-from search import best_first_graph_search, astar_search, Node
+from search import best_first_graph_search, astar_search, Node, hill_climbing, simulated_annealing
 
 
 class SimpleProblemSolvingAgent:
