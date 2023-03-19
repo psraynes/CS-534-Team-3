@@ -68,6 +68,10 @@ If the problem persists, verify that you have the correct file path.
         print("A* Search: Total Cost = " + str(spsa.total_path_cost()))
         print(str(astar_path) + "\n")
 
+        # Todo: Add segment for reset and initiate Hill Climbing
+
+        # Todo: Add segment for reset and initiate Simulated Annealing
+
         # Query if the user wants to keep searching this map
         want_to_go_again = input("Would you like to continue to search the map? Y/N: ")
         if want_to_go_again.casefold() == "y":
