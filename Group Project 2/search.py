@@ -118,7 +118,6 @@ def hill_climbing(problem, h=None, display=False):
     stopping when no neighbor is better.
     """
     current = Node(problem.initial)
-    path = []
     while True:
         neighbors = current.expand(problem)
         if not neighbors:
@@ -127,10 +126,8 @@ def hill_climbing(problem, h=None, display=False):
         if problem.value(neighbor.state) <= problem.value(current.state):
             break
         current = neighbor
-        path += [current]
         # print(current.state)
-    # Todo: Fix this to return correct type
-    return path
+    return current
 
 
 def exp_schedule(k=20, lam=0.005, limit=100):
@@ -145,10 +142,10 @@ def simulated_annealing(problem, h=None,  schedule=exp_schedule(), display=False
     for t in range(sys.maxsize):
         T = schedule(t)
         if T == 0:
-            return node.state
+            return node
         neighbors = node.expand(problem)
         if not neighbors:
-            return node.state
+            return node
         next_choice = random.choice(neighbors)
         delta_e = problem.value(next_choice.state) - problem.value(node.state)
         if delta_e > 0 or probability(np.exp(delta_e / T)):

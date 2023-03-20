@@ -55,6 +55,8 @@ class SimpleProblemSolvingAgent:
         if results is None:
             return None
         else:
+            # print(results)
+            # print(results.path())
             return results.path()
 
     def set_search_type(self, search_type):
