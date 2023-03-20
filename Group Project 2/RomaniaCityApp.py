@@ -79,7 +79,7 @@ If the problem persists, verify that you have the correct file path.
         spsa.reset()
         spsa.set_search_type(simulated_annealing)
         simulated_annealing_path = spsa(destination_city)
-        print("Hill Climbing Search: Total Cost = " + str(spsa.total_path_cost()))
+        print("Simulated Annealing Search: Total Cost = " + str(spsa.total_path_cost()))
         print(str(simulated_annealing_path) + "\n")
 
         # Query if the user wants to keep searching this map
