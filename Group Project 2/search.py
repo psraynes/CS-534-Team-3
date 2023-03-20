@@ -130,23 +130,22 @@ def hill_climbing(problem, h=None, display=False):
     return current
 
 
+# Leaving these values as is, although tuning could be done on these defaults
 def exp_schedule(k=20, lam=0.005, limit=100):
     """One possible schedule function for simulated annealing"""
     return lambda t: (k * np.exp(-lam * t) if t < limit else 0)
 
 
 def simulated_annealing(problem, h=None,  schedule=exp_schedule(), display=False):
-    """[Figure 4.5] CAUTION: This differs from the pseudocode as it
-    returns a state instead of a Node."""
-    node = Node(problem.initial)
+    current = Node(problem.initial)
     for t in range(sys.maxsize):
         T = schedule(t)
         if T == 0:
-            return node
-        neighbors = node.expand(problem)
+            return current
+        neighbors = current.expand(problem)
         if not neighbors:
-            return node
+            return current
         next_choice = random.choice(neighbors)
-        delta_e = problem.value(next_choice.state) - problem.value(node.state)
+        delta_e = problem.value(next_choice.state) - problem.value(current.state)
         if delta_e > 0 or probability(np.exp(delta_e / T)):
-            node = next_choice
+            current = next_choice
