@@ -18,4 +18,5 @@ def load_and_sample(filename, classification_label, rand_state=534):
     # combine the arrays as a dataframe again to return the
     sampled_data = pd.DataFrame(feat_sampled)
     sampled_data['Machine failure'] = class_sampled
-    return sampled_data
+    return sampled_data, feat_sampled, class_sampled
+
