@@ -9,11 +9,15 @@ from data_processing import *
 
 
 def main():
-    data, samp_features, samp_class = load_and_sample('ai4i2020.csv', 'Machine failure')
+    data, samp_features, samp_class = load_and_sample('ai4i2020.csv', 'Machine failure', ['UDI', 'Product ID'])
     num_obs, num_features = samp_features.shape
+    
+    # Convert L, M, H strings to 0, 1, 2 numbers
+    samp_features = samp_features.applymap(encodeLMH)
 
-    # todo: train test split 70/30
-
+    # Split data into training and testing sets
+    features_train, features_test, class_train, class_test = train_test_split(samp_features, samp_class, train_size=0.7)
+    
     # multi-layer perceptron. Tuning will be on hidden_layer_sizes and activation function:
     # hidden_layer_sizes, activation
     mlp = MLPClassifier()
@@ -23,6 +27,8 @@ def main():
     mlp_grid = {'hidden_layer_sizes': [],
                 'activation': ['identity', 'logistic', 'tanh', 'relu']
                 }
+    
+    mlp.fit(features_train, class_train)
 
     # Support Vector Machine. Tuning on the regularization parameter and kernel function:
     # C, kernel
