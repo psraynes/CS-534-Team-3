@@ -1,6 +1,7 @@
 # Graph object and related classes.
 # Majority of this code is pulled from the Artificial Intelligence: A Modern Approach reference code
 # Repo located at https://github.com/aimacode/aima-python
+import numpy as np
 
 from util import *
 from re import split
@@ -106,7 +107,12 @@ class GraphProblem(Problem):
             return np.inf
     
     def value(self, state):
-        return self.h(state)
+        # inverting this to provide preference to lower values (farther distance) instead of high distance/value
+        dist = self.h(state)
+        if dist == 0:
+            return np.inf
+        else:
+            return 1/dist
 
 
 def loadGraphFromFile(file_path):

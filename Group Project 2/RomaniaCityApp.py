@@ -1,6 +1,6 @@
 # Main Romania City App
 
-from SimpleProblemSolvingAgent import SimpleProblemSolvingAgent, astar_search
+from SimpleProblemSolvingAgent import SimpleProblemSolvingAgent, astar_search, hill_climbing, simulated_annealing
 from graph import loadGraphFromFile
 
 def main():
@@ -67,6 +67,20 @@ If the problem persists, verify that you have the correct file path.
         astar_path = spsa(destination_city)
         print("A* Search: Total Cost = " + str(spsa.total_path_cost()))
         print(str(astar_path) + "\n")
+
+        # Reset the path in the SPSA, Change to Hill Climbing search and call it
+        spsa.reset()
+        spsa.set_search_type(hill_climbing)
+        hill_climbing_path = spsa(destination_city)
+        print("Hill Climbing Search: Total Cost = " + str(spsa.total_path_cost()))
+        print(str(hill_climbing_path) + "\n")
+
+        # Reset the path in the SPSA, Change to Simulated Annealing search and call it
+        spsa.reset()
+        spsa.set_search_type(simulated_annealing)
+        simulated_annealing_path = spsa(destination_city)
+        print("Simulated Annealing Search: Total Cost = " + str(spsa.total_path_cost()))
+        print(str(simulated_annealing_path) + "\n")
 
         # Query if the user wants to keep searching this map
         want_to_go_again = input("Would you like to continue to search the map? Y/N: ")

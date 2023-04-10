@@ -5,6 +5,7 @@
 import functools
 import heapq
 import numpy as np
+import random
 
 
 def is_in(elt, seq):
@@ -145,4 +146,28 @@ class Problem:
         """For optimization problems, each state has a value. Hill Climbing
         and related algorithms try to maximize this value."""
         raise NotImplementedError
-    
+
+
+identity = lambda x: x
+
+
+def argmin_random_tie(seq, key=identity):
+    """Return a minimum element of seq; break ties at random."""
+    return min(shuffled(seq), key=key)
+
+
+def argmax_random_tie(seq, key=identity):
+    """Return an element with highest fn(seq[i]) score; break ties at random."""
+    return max(shuffled(seq), key=key)
+
+
+def shuffled(iterable):
+    """Randomly shuffle a copy of iterable."""
+    items = list(iterable)
+    random.shuffle(items)
+    return items
+
+
+def probability(p):
+    """Return true with probability p."""
+    return p > random.uniform(0.0, 1.0)
