@@ -14,7 +14,7 @@ def load_and_sample(filename, classification_label, id_labels, rand_state=534):
 
     # feat_sampled is an array containing the observations of the dataset after sampling, excluding the classification
     # class_sampled is an array containing the classifications of the observation after sampling.
-    feat_sampled, class_sampled = rus.fit_resample(features, classification) # type: ignore
+    feat_sampled, class_sampled = rus.fit_resample(features, classification)
     # combine the arrays as a dataframe again to return the
     sampled_data = pd.DataFrame(feat_sampled)
     sampled_data['Machine failure'] = class_sampled
