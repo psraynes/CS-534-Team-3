@@ -36,6 +36,8 @@ def main():
     mlp_params = mlp_search.best_params_
     mlp_score = mlp_search.score(features_train, class_train)
 
+    # TODO: All models after here are giving us an f1 score of 1.0, which seems like it indicates a problem
+
     # Support Vector Machine. Tuning on the regularization parameter and kernel function:
     # C, kernel
     svm = SVC()
