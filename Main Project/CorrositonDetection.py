@@ -1,10 +1,10 @@
 import cv2
-from skimage.feature import graycomatrix
+from skimage.feature import graycomatrix, graycoprops
 import numpy as np
 
 # todo: code for loading all images
 
-path = "C:/Users/Owner/Desktop/16624663/Corrosion Condition State Classification/Corrosion Condition State Classification/512x512/Train/images_512/0.jpeg"
+path = "C:/Users/Paul/Documents/AI Corrosion Pics/Corrosion Condition State Classification/Corrosion Condition State Classification/512x512/Train/images_512/0.jpeg"
 picture = cv2.imread(path)
 
 
@@ -40,10 +40,23 @@ print(grayscale_img)
 # cv2.imshow('img', grayscale_img)
 # cv2.waitKey(0)
 
+glcm_data = np.empty(shape=(patch_per_side, patch_per_side, 8), dtype=float)
 
-gclm = graycomatrix(tiles[0][0], [1], [0, np.pi/4, np.pi/2, 3*np.pi/4], levels=256)
+for x in range(patch_per_side):
+    for y in range(patch_per_side):
+        glcm = graycomatrix(tiles[x][y], [1], [0, np.pi/4, np.pi/2, 3*np.pi/4], levels=256)
+        
+        contrast = graycoprops(glcm, 'contrast')
+        correlation = graycoprops(glcm, 'correlation')
 
-print('The gray comatrix is shape:', gclm.shape)
+        for i in range(0,8,2):
+            glcm_data[x][y][i] = contrast[0][i//2]
+            glcm_data[x][y][i+1] = correlation[0][i//2]
 
-print(gclm[:, :, 0, 0])
+data = np.empty(shape=(hsv_img.shape[0],hsv_img.shape[1],11))
 
+for x in range(hsv_img.shape[0]):
+    for y in range(hsv_img.shape[1]):
+        data[x][y] = np.concatenate((hsv_img[x][y], glcm_data[x//M][y//N]))
+        
+print(data)
