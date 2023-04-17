@@ -4,10 +4,13 @@ import numpy as np
 
 def loadRawImage(path):
     picture = cv2.imread(path)
+    
+    # Resize the image to 512x512
+    resize_img = cv2.resize(picture, (512,512), interpolation=cv2.INTER_AREA)
 
     # convert to hsv and grayscale
-    hsv_img = cv2.cvtColor(picture, cv2.COLOR_BGR2HSV)
-    grayscale_img = cv2.cvtColor(picture, cv2.COLOR_BGR2GRAY)
+    hsv_img = cv2.cvtColor(resize_img, cv2.COLOR_BGR2HSV)
+    grayscale_img = cv2.cvtColor(resize_img, cv2.COLOR_BGR2GRAY)
 
     # Break image into 16x16 patches -> 32 patches per side -> 1024 patches total
     imgheight = grayscale_img.shape[0]
@@ -48,3 +51,6 @@ def loadRawImage(path):
             
     return data
         
+path = "C:/Users/psray/Documents/AI Rust Pictures/Corrosion Condition State Classification/original/Train/images/0.jpeg"
+loadRawImage(path)
+
