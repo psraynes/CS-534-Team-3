@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 from skimage.feature import graycomatrix, graycoprops
 
 
@@ -78,5 +79,40 @@ def load_raw_image(path):
             
     return data
 
+###
+# function to ask the user for the image and mask directories, then load the files
+
+###
 def load_all_files():
-    pass
+    image_folder = input("Please provide the directory containing the images: ")
+    mask_folder = input("Please provide the directory containing the masks: ")
+    
+    # Replace \ with /
+    image_folder = image_folder.replace("\\","/")
+    mask_folder = mask_folder.replace("\\","/")
+    
+    # Add / if its missing from directory
+    if not (image_folder.endswith("/") or image_folder.endswith("\\")):
+        image_folder = image_folder + "/"
+    if not (mask_folder.endswith("/") or mask_folder.endswith("\\")):
+        mask_folder = mask_folder + "/"
+        
+    # List all files in both directories, ignore file extension
+    image_file_names = os.listdir(image_folder)
+    mask_file_names = os.listdir(mask_folder)
+    
+    missing_masks = set(os.path.splitext(file_name)[0] for file_name in image_file_names).difference(set(os.path.splitext(file_name)[0] for file_name in mask_file_names))
+    
+    if len(missing_masks) > 0:
+        print("The following files do not have masks, omitting them from load:")
+        print(missing_masks)
+    
+    pixel_data = []
+    for file_name in image_file_names:
+        if os.path.splitext(file_name)[0] not in missing_masks:
+            # raw_data = load_raw_image(image_folder + file_name)
+            print(image_folder + file_name)
+            print(mask_folder + file_name)
+            mask = load_mask(mask_folder + file_name)
+        
+load_all_files()
