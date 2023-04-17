@@ -40,7 +40,7 @@ def loadRawImage(path):
                 glcm_data[x][y][i+1] = correlation[0][i//num_glcm_props]
                 
     # Combine HSV and GLCM data into one object
-    data = np.empty(shape=(hsv_img.shape[0],hsv_img.shape[1],11))
+    data = np.empty(shape=(hsv_img.shape[0],hsv_img.shape[1],(num_glcm_props*4) + 3))
 
     for x in range(hsv_img.shape[0]):
         for y in range(hsv_img.shape[1]):
