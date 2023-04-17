@@ -75,5 +75,11 @@ def loadRawImage(path):
     for x in range(hsv_img.shape[0]):
         for y in range(hsv_img.shape[1]):
             data[x][y] = np.concatenate((hsv_img[x][y], glcm_data[x//patch_height][y//patch_widtth]))
-            
+
+    # Returned object is an array with dimensions:
+    # image height x
+    # image width x
+    # (number gclm properties times 4 direction)
+    # Typically, this is 512x512*11
+    # Each pixel is given Hue, Value, Saturation, and 8 gclm values (contrast and correlation in 4 directions).
     return data
