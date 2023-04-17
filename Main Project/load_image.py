@@ -29,7 +29,7 @@ def load_mask(path, levels=False):
 # and correlation for each of 4 directions
 
 ###
-def loadRawImage(path):
+def load_raw_image(path):
     picture = cv2.imread(path)
     
     # Resize the image to 512x512
@@ -77,3 +77,6 @@ def loadRawImage(path):
             data[x][y] = np.concatenate((hsv_img[x][y], glcm_data[x//patch_height][y//patch_widtth]))
             
     return data
+
+def load_all_files():
+    pass
