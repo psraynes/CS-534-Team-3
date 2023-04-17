@@ -4,7 +4,7 @@ import numpy as np
 
 # todo: code for loading all images
 
-path = "C:/Users/Paul/Documents/AI Corrosion Pics/Corrosion Condition State Classification/Corrosion Condition State Classification/512x512/Train/images_512/0.jpeg"
+path = "C:/Users/Owner/Desktop/16624663/Corrosion Condition State Classification/Corrosion Condition State Classification/512x512/Train/images_512/0.jpeg"
 picture = cv2.imread(path)
 
 
