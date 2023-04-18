@@ -3,6 +3,7 @@ import numpy as np
 import os
 from skimage.feature import graycomatrix, graycoprops
 
+IMAGE_SIZE = (512,512)
 
 ###
 # function to take in a path to a mask image, and return an array for the pixels.
@@ -17,16 +18,16 @@ def load_mask(path, levels=False):
     picture = cv2.imread(path, 0)
     
     # Resize the image to 512x512
-    resize_img = cv2.resize(picture, (512,512), interpolation=cv2.INTER_AREA)
+    resize_img = cv2.resize(picture, IMAGE_SIZE, interpolation=cv2.INTER_AREA)
     
     # If levels of corrosion are needed, map to 1,2,3, otherwise, map nonzero values to 1
     if levels:
-        picture[picture == 38] = 1
-        picture[picture == 75] = 2
-        picture[picture == 113] = 3
+        resize_img[resize_img == 38] = 1
+        resize_img[resize_img == 75] = 2
+        resize_img[resize_img == 113] = 3
     else:
-        picture[picture != 0] = 1
-    return picture
+        resize_img[resize_img != 0] = 1
+    return resize_img
 
 ###
 # function to take in a path to a raw image, and return an array for the pixels.
@@ -38,7 +39,7 @@ def load_raw_image(path):
     picture = cv2.imread(path)
     
     # Resize the image to 512x512
-    resize_img = cv2.resize(picture, (512,512), interpolation=cv2.INTER_AREA)
+    resize_img = cv2.resize(picture, IMAGE_SIZE, interpolation=cv2.INTER_AREA)
 
     # convert to hsv and grayscale
     hsv_img = cv2.cvtColor(resize_img, cv2.COLOR_BGR2HSV)
@@ -85,6 +86,7 @@ def load_raw_image(path):
 
 ###
 # function to ask the user for the image and mask directories, then load the files
+# Returns a 2d array containing a unique row for each pixel in all the images scaled to IMAGE_SIZE
 
 ###
 def load_all_files():
@@ -136,5 +138,16 @@ def load_all_files():
         if file_name not in missing_masks:
             raw_data = load_raw_image(image_folder + file_name + image_file_name_map[file_name])
             mask = load_mask(mask_folder + file_name + mask_file_name_map[file_name])
+            
+            for x in range(IMAGE_SIZE[0]):
+                for y in range(IMAGE_SIZE[1]):
+                    uid = file_name + "x" + str(x) + "y" + str(y) # Generate a unique id for this pixel
+                    data_row = [uid]
+                    data_row.extend(raw_data[x][y].tolist()) # Add the raw data to the list
+                    data_row.append(mask[x][y]) # Add the mask data to the list
+                    
+                    pixel_data.append(data_row)
+                    
+    return pixel_data
         
 load_all_files()
