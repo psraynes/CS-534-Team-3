@@ -15,6 +15,10 @@ from skimage.feature import graycomatrix, graycoprops
 ###
 def load_mask(path, levels=False):
     picture = cv2.imread(path, 0)
+    
+    # Resize the image to 512x512
+    resize_img = cv2.resize(picture, (512,512), interpolation=cv2.INTER_AREA)
+    
     # If levels of corrosion are needed, map to 1,2,3, otherwise, map nonzero values to 1
     if levels:
         picture[picture == 38] = 1
@@ -97,22 +101,40 @@ def load_all_files():
     if not (mask_folder.endswith("/") or mask_folder.endswith("\\")):
         mask_folder = mask_folder + "/"
         
-    # List all files in both directories, ignore file extension
+    # List all files in both directories
     image_file_names = os.listdir(image_folder)
     mask_file_names = os.listdir(mask_folder)
     
-    missing_masks = set(os.path.splitext(file_name)[0] for file_name in image_file_names).difference(set(os.path.splitext(file_name)[0] for file_name in mask_file_names))
+    # Separate the names from the extensions and determine which are missing
+    image_file_name_map = {}
+    mask_file_name_map = {}
+    missing_images = []
+    
+    for file_name in image_file_names:
+        (name, ext) = os.path.splitext(file_name)
+        image_file_name_map.update({name: ext})
+        
+    for file_name in mask_file_names:
+        (name, ext) = os.path.splitext(file_name)
+        if name not in image_file_name_map.keys():
+            missing_images.append(name)
+        else:
+            mask_file_name_map.update({name: ext})
+    
+    missing_masks = set(image_file_name_map.keys()).difference(set(mask_file_name_map.keys()))
     
     if len(missing_masks) > 0:
         print("The following files do not have masks, omitting them from load:")
         print(missing_masks)
     
+    if len(missing_images) > 0:
+        print("The following masks do not have files, omitting them from load:")
+        print(missing_images)
+    
     pixel_data = []
-    for file_name in image_file_names:
-        if os.path.splitext(file_name)[0] not in missing_masks:
-            # raw_data = load_raw_image(image_folder + file_name)
-            print(image_folder + file_name)
-            print(mask_folder + file_name)
-            mask = load_mask(mask_folder + file_name)
+    for file_name in image_file_name_map:
+        if file_name not in missing_masks:
+            raw_data = load_raw_image(image_folder + file_name + image_file_name_map[file_name])
+            mask = load_mask(mask_folder + file_name + mask_file_name_map[file_name])
         
 load_all_files()
