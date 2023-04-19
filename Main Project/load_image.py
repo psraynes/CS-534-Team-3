@@ -149,5 +149,4 @@ def load_all_files():
                     pixel_data.append(data_row)
                     
     return pixel_data
-        
-load_all_files()
+
