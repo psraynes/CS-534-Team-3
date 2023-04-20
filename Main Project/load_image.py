@@ -93,7 +93,7 @@ def load_raw_image(path):
 def load_all_files():
     image_folder = input("Please provide the directory containing the images: ")
     mask_folder = input("Please provide the directory containing the masks: ")
-    file_name = input("Please name the output file: ")
+    output_name = input("Please name the output file: ")
     
     # Replace \ with /
     image_folder = image_folder.replace("\\","/")
@@ -136,7 +136,7 @@ def load_all_files():
         print(missing_images)
         
     # Setup CSV output
-    csv_file = open(file_name,'w')
+    csv_file = open(output_name,'w')
     csv_writer = csv.writer(csv_file)
     header = ["uid","h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4","label"]
     csv_writer.writerow(header)
@@ -154,6 +154,7 @@ def load_all_files():
                     data_row.append(mask[x][y]) # Add the mask data to the list
                     
                     csv_writer.writerow(data_row)
+                    csv_file.flush()
            
     csv_file.close()         
     return
