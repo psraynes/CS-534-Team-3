@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+import csv
 from skimage.feature import graycomatrix, graycoprops
 
 IMAGE_SIZE = (512,512)
@@ -92,6 +93,7 @@ def load_raw_image(path):
 def load_all_files():
     image_folder = input("Please provide the directory containing the images: ")
     mask_folder = input("Please provide the directory containing the masks: ")
+    file_name = input("Please name the output file: ")
     
     # Replace \ with /
     image_folder = image_folder.replace("\\","/")
@@ -132,8 +134,13 @@ def load_all_files():
     if len(missing_images) > 0:
         print("The following masks do not have files, omitting them from load:")
         print(missing_images)
+        
+    # Setup CSV output
+    csv_file = open(file_name,'w')
+    csv_writer = csv.writer(csv_file)
+    header = ["uid","h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4","label"]
+    csv_writer.writerow(header)
     
-    pixel_data = []
     for file_name in image_file_name_map:
         if file_name not in missing_masks:
             raw_data = load_raw_image(image_folder + file_name + image_file_name_map[file_name])
@@ -146,7 +153,8 @@ def load_all_files():
                     data_row.extend(raw_data[x][y].tolist()) # Add the raw data to the list
                     data_row.append(mask[x][y]) # Add the mask data to the list
                     
-                    pixel_data.append(data_row)
-                    
-    return pixel_data
+                    csv_writer.writerow(data_row)
+           
+    csv_file.close()         
+    return
 
