@@ -1,7 +1,10 @@
 import cv2
 import numpy as np
+import os
+import csv
 from skimage.feature import graycomatrix, graycoprops
 
+IMAGE_SIZE = (512,512)
 
 ###
 # function to take in a path to a mask image, and return an array for the pixels.
@@ -14,14 +17,18 @@ from skimage.feature import graycomatrix, graycoprops
 ###
 def load_mask(path, levels=False):
     picture = cv2.imread(path, 0)
+    
+    # Resize the image to 512x512
+    resize_img = cv2.resize(picture, IMAGE_SIZE, interpolation=cv2.INTER_AREA)
+    
     # If levels of corrosion are needed, map to 1,2,3, otherwise, map nonzero values to 1
     if levels:
-        picture[picture == 38] = 1
-        picture[picture == 75] = 2
-        picture[picture == 113] = 3
+        resize_img[resize_img == 38] = 1
+        resize_img[resize_img == 75] = 2
+        resize_img[resize_img == 113] = 3
     else:
-        picture[picture != 0] = 1
-    return picture
+        resize_img[resize_img != 0] = 1
+    return resize_img
 
 ###
 # function to take in a path to a raw image, and return an array for the pixels.
@@ -29,11 +36,11 @@ def load_mask(path, levels=False):
 # and correlation for each of 4 directions
 
 ###
-def loadRawImage(path):
+def load_raw_image(path):
     picture = cv2.imread(path)
     
     # Resize the image to 512x512
-    resize_img = cv2.resize(picture, (512,512), interpolation=cv2.INTER_AREA)
+    resize_img = cv2.resize(picture, IMAGE_SIZE, interpolation=cv2.INTER_AREA)
 
     # convert to hsv and grayscale
     hsv_img = cv2.cvtColor(resize_img, cv2.COLOR_BGR2HSV)
@@ -75,11 +82,80 @@ def loadRawImage(path):
     for x in range(hsv_img.shape[0]):
         for y in range(hsv_img.shape[1]):
             data[x][y] = np.concatenate((hsv_img[x][y], glcm_data[x//patch_height][y//patch_widtth]))
-
-    # Returned object is an array with dimensions:
-    # image height x
-    # image width x
-    # (number gclm properties times 4 direction)
-    # Typically, this is 512x512*11
-    # Each pixel is given Hue, Value, Saturation, and 8 gclm values (contrast and correlation in 4 directions).
+            
     return data
+
+###
+# function to ask the user for the image and mask directories, then load the files
+# Returns a 2d array containing a unique row for each pixel in all the images scaled to IMAGE_SIZE
+
+###
+def load_all_files():
+    image_folder = input("Please provide the directory containing the images: ")
+    mask_folder = input("Please provide the directory containing the masks: ")
+    output_name = input("Please name the output file: ")
+    
+    # Replace \ with /
+    image_folder = image_folder.replace("\\","/")
+    mask_folder = mask_folder.replace("\\","/")
+    
+    # Add / if its missing from directory
+    if not (image_folder.endswith("/") or image_folder.endswith("\\")):
+        image_folder = image_folder + "/"
+    if not (mask_folder.endswith("/") or mask_folder.endswith("\\")):
+        mask_folder = mask_folder + "/"
+        
+    # List all files in both directories
+    image_file_names = os.listdir(image_folder)
+    mask_file_names = os.listdir(mask_folder)
+    
+    # Separate the names from the extensions and determine which are missing
+    image_file_name_map = {}
+    mask_file_name_map = {}
+    missing_images = []
+    
+    for file_name in image_file_names:
+        (name, ext) = os.path.splitext(file_name)
+        image_file_name_map.update({name: ext})
+        
+    for file_name in mask_file_names:
+        (name, ext) = os.path.splitext(file_name)
+        if name not in image_file_name_map.keys():
+            missing_images.append(name)
+        else:
+            mask_file_name_map.update({name: ext})
+    
+    missing_masks = set(image_file_name_map.keys()).difference(set(mask_file_name_map.keys()))
+    
+    if len(missing_masks) > 0:
+        print("The following files do not have masks, omitting them from load:")
+        print(missing_masks)
+    
+    if len(missing_images) > 0:
+        print("The following masks do not have files, omitting them from load:")
+        print(missing_images)
+        
+    # Setup CSV output
+    csv_file = open(output_name,'w')
+    csv_writer = csv.writer(csv_file)
+    header = ["uid","h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4","label"]
+    csv_writer.writerow(header)
+    
+    for file_name in image_file_name_map:
+        if file_name not in missing_masks:
+            raw_data = load_raw_image(image_folder + file_name + image_file_name_map[file_name])
+            mask = load_mask(mask_folder + file_name + mask_file_name_map[file_name])
+            
+            for x in range(IMAGE_SIZE[0]):
+                for y in range(IMAGE_SIZE[1]):
+                    uid = file_name + "x" + str(x) + "y" + str(y) # Generate a unique id for this pixel
+                    data_row = [uid]
+                    data_row.extend(raw_data[x][y].tolist()) # Add the raw data to the list
+                    data_row.append(mask[x][y]) # Add the mask data to the list
+                    
+                    csv_writer.writerow(data_row)
+                    csv_file.flush()
+           
+    csv_file.close()         
+    return
+
