@@ -39,9 +39,9 @@ batch_sz = 1
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_sz, shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_sz, shuffle=True)
 
-alex = tv.models.AlexNet(num_classes=2,dropout=0) # Note: We need to perform 5 fold cross validation on this dropout value
+alex = tv.models.AlexNet(num_classes=2, dropout=0) # Note: We need to perform 5 fold cross validation on this dropout value
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(alex.parameters(), lr=0.01, momentum=0.9)
+optimizer = optim.SGD(alex.parameters(), lr=0.01, momentum=0)
 
 for epoch in range(5):  # loop over the dataset multiple times
     running_loss = 0.0
