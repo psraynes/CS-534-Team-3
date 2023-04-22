@@ -14,11 +14,7 @@ if not test_folder:
 
 # Transformations to perform on the training and testing data
 train_transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomVerticalFlip(p=0.5),
-    transforms.GaussianBlur(kernel_size=(5, 9), sigma=(0.1, 5)),
-    transforms.RandomRotation(degrees=(30, 70)),
+    transforms.Resize((512, 512)),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=[0.5, 0.5, 0.5],
@@ -26,7 +22,7 @@ train_transform = transforms.Compose([
     )
 ])
 test_transform = transforms.Compose([
-    transforms.Resize((224, 224)),
+    transforms.Resize((512, 512)),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=[0.5, 0.5, 0.5],
@@ -39,31 +35,38 @@ train_dataset = tv.datasets.ImageFolder(root=train_folder, transform=train_trans
 test_dataset = tv.datasets.ImageFolder(root=test_folder, transform=test_transform)
 
 # Turn data sets into data loaders
-batch_sz = 10
+batch_sz = 1
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_sz, shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_sz, shuffle=True)
 
 alex = tv.models.AlexNet(num_classes=2,dropout=0) # Note: We need to perform 5 fold cross validation on this dropout value
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(alex.parameters(), lr=0.001, momentum=0.9)
+optimizer = optim.SGD(alex.parameters(), lr=0.01, momentum=0.9)
 
-running_loss = 0.0
-for i, data in enumerate(train_loader, 0):
-    # get the inputs; data is a list of [inputs, labels]
-    inputs, labels = data
-
-    # zero the parameter gradients
-    optimizer.zero_grad()
-
-    # forward + backward + optimize
-    outputs = alex(inputs)
-    loss = criterion(outputs, labels)
-    loss.backward()
-    optimizer.step()
-
-    # print statistics
-    running_loss += loss.item()
-    print(f'[{i + 1:5d}] loss: {running_loss:.3f}')
+for epoch in range(2):  # loop over the dataset multiple times
     running_loss = 0.0
+    for i, data in enumerate(train_loader, 0):
+        # get the inputs; data is a list of [inputs, labels]
+        inputs, labels = data
+
+        # zero the parameter gradients
+        optimizer.zero_grad()
+
+        # forward + backward + optimize
+        outputs = alex(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        # print statistics
+        running_loss += loss.item()
+        if i % 5 == 4:    # print every 2000 mini-batches
+            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 5:.3f}')
+            running_loss = 0.0
         
+test_iter = iter(test_loader)
+test_images, test_labels = next(test_iter)
+
+test_outputs = alex(test_images)
+
             
