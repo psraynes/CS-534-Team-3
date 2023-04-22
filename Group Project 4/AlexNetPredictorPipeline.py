@@ -1,24 +1,72 @@
-import os
-from torch.utils import data
-from torchvision import datasets
+import torch
+import torch.utils.data
+import torchvision as tv
 import torchvision.transforms as transforms
+import torch.nn as nn
+import torch.optim as optim
 
-melanoma_folder = input("Please provide the directory for the Melanoma pictures: ")
-naevus_folder = input("Please provide the directory for the Naevus pictures: ")
-if not melanoma_folder:
-    melanoma_folder = "Group Project 4/complete_mednode_dataset/melanoma/"
-if not naevus_folder:
-    naevus_folder = "Group Project 4/complete_mednode_dataset/naevus/"
+train_folder = input("Please provide the directory for the training data: ")
+test_folder = input("Please provide the directory for the testing data: ")
+if not train_folder:
+    train_folder = "Group Project 4/complete_mednode_dataset/train/"
+if not test_folder:
+    test_folder = "Group Project 4/complete_mednode_dataset/test/"
 
-melanoma_dataset = datasets.ImageFolder(melanoma_folder)
-naevus_dataset = datasets.ImageFolder(naevus_folder)
+# Transformations to perform on the training and testing data
+train_transform = transforms.Compose([
+    transforms.Resize((512, 512)),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.5, 0.5, 0.5],
+        std=[0.5, 0.5, 0.5]
+    )
+])
+test_transform = transforms.Compose([
+    transforms.Resize((512, 512)),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.5, 0.5, 0.5],
+        std=[0.5, 0.5, 0.5]
+    )
+])
 
-melanoma_trainset = data.Subset(melanoma_dataset, range(50))
-melanoma_testset = data.Subset(melanoma_dataset, range(50,70))
+# Load folders into data sets
+train_dataset = tv.datasets.ImageFolder(root=train_folder, transform=train_transform)
+test_dataset = tv.datasets.ImageFolder(root=test_folder, transform=test_transform)
 
-naevus_trainset = data.Subset(naevus_dataset, range(50))
-naevus_testset = data.Subset(naevus_dataset, range(50,70))
+# Turn data sets into data loaders
+batch_sz = 1
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_sz, shuffle=True)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_sz, shuffle=True)
 
-train_set = data.ConcatDataset([melanoma_trainset, naevus_trainset])
-test_set = data.ConcatDataset([melanoma_testset, naevus_testset])
+alex = tv.models.AlexNet(num_classes=2,dropout=0) # Note: We need to perform 5 fold cross validation on this dropout value
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(alex.parameters(), lr=0.01, momentum=0.9)
 
+for epoch in range(2):  # loop over the dataset multiple times
+    running_loss = 0.0
+    for i, data in enumerate(train_loader, 0):
+        # get the inputs; data is a list of [inputs, labels]
+        inputs, labels = data
+
+        # zero the parameter gradients
+        optimizer.zero_grad()
+
+        # forward + backward + optimize
+        outputs = alex(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        # print statistics
+        running_loss += loss.item()
+        if i % 5 == 4:    # print every 2000 mini-batches
+            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 5:.3f}')
+            running_loss = 0.0
+        
+test_iter = iter(test_loader)
+test_images, test_labels = next(test_iter)
+
+test_outputs = alex(test_images)
+
+            
