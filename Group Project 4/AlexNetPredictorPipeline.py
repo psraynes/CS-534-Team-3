@@ -43,8 +43,9 @@ alex = tv.models.AlexNet(num_classes=2,dropout=0) # Note: We need to perform 5 f
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(alex.parameters(), lr=0.01, momentum=0.9)
 
-for epoch in range(2):  # loop over the dataset multiple times
+for epoch in range(5):  # loop over the dataset multiple times
     running_loss = 0.0
+    alex.train(True)
     for i, data in enumerate(train_loader, 0):
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data
@@ -63,10 +64,21 @@ for epoch in range(2):  # loop over the dataset multiple times
         if i % 5 == 4:    # print every 2000 mini-batches
             print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 5:.3f}')
             running_loss = 0.0
+            
+    alex.train(False)
         
-test_iter = iter(test_loader)
-test_images, test_labels = next(test_iter)
+correct = 0
+total = 0
+# since we're not training, we don't need to calculate the gradients for our outputs
+with torch.no_grad():
+    for data in test_loader:
+        images, labels = data
+        # calculate outputs by running images through the network
+        outputs = alex(images)
+        # the class with the highest energy is what we choose as prediction
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
 
-test_outputs = alex(test_images)
-
+print(f'Accuracy of the network on the test images: {100 * correct // total} %')
             
