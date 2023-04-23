@@ -1,6 +1,7 @@
 # https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-use-k-fold-cross-validation-with-pytorch.md
 import os
 import torch
+import torch.utils.data
 from torch import nn
 from torchvision.datasets import MNIST
 from torch.utils.data import DataLoader, ConcatDataset
