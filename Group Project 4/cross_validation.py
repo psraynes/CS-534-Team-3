@@ -1,4 +1,8 @@
 # https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-use-k-fold-cross-validation-with-pytorch.md
+
+# Code taken from above source and used as extensive reference for completing cross validation
+# reset_weights function also used for best practice
+
 import os
 import torch
 from torch import nn

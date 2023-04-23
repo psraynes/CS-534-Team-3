@@ -5,6 +5,7 @@ import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
 from sklearn.model_selection import KFold
+from cross_validation import reset_weights
 
 
 def main():
@@ -69,6 +70,7 @@ def main():
 
         alex = tv.models.AlexNet(num_classes=2, dropout=(fold*0.25))
         optimizer = optim.SGD(alex.parameters(), lr=0.01, momentum=0)
+        alex.apply(reset_weights)
 
         for epoch in range(num_epochs):  # loop over the dataset multiple times
             running_loss = 0.0
