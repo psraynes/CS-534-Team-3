@@ -34,7 +34,7 @@ def main():
         )
     ])
 
-    k_folds = 2
+    k_folds = 5
     num_epochs = 1
     batch_sz = 1
     criterion = nn.CrossEntropyLoss()
@@ -150,6 +150,7 @@ def main():
             correct += (predicted == labels).sum().item()
 
     print(f'Accuracy of the network on the test images: {100 * correct // total} %')
+    
 if __name__ == "__main__":
     main()
             
