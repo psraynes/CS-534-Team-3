@@ -139,7 +139,7 @@ if __name__ == '__main__':
         save_path = f'./model-fold-{fold}.pth'
         torch.save(network.state_dict(), save_path)
 
-        # Evaluationfor this fold
+        # Evaluation for this fold
         correct, total = 0, 0
         with torch.no_grad():
 
