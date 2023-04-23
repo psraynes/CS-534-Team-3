@@ -34,8 +34,8 @@ def main():
         )
     ])
 
-    k_folds = 2
-    num_epochs = 1
+    k_folds = 5
+    num_epochs = 5
     batch_sz = 1
     criterion = nn.CrossEntropyLoss()
 
@@ -138,6 +138,12 @@ def main():
     correct = 0
     total = 0
 
+    alex = tv.models.AlexNet(num_classes=2, dropout=(best_dropout))
+    alex.load_state_dict(torch.load(f'./model-fold-{best_fold}.pth'))
+    test_loader = torch.utils.data.DataLoader(
+        test_dataset,
+        batch_size=batch_sz,
+        shuffle=True)
     # since we're not training, we don't need to calculate the gradients for our outputs
     with torch.no_grad():
         for data in test_loader:
