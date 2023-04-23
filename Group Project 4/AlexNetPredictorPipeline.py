@@ -34,8 +34,8 @@ def main():
         )
     ])
 
-    k_folds = 5
-    num_epochs = 2
+    k_folds = 2
+    num_epochs = 1
     batch_sz = 1
     criterion = nn.CrossEntropyLoss()
 
@@ -124,8 +124,20 @@ def main():
             results[fold] = 100.0 * (correct / total)
         print("End of Fold :------------")
 
+    # Print fold results
+    print(f'K-FOLD CROSS VALIDATION RESULTS FOR BEST FOLD')
+    print('--------------------------------')
+    best = [i for i in results if results[i] == max(results.values())]
+    best_fold = int(best[0])
+    best_val = results[best[0]]
+    best_dropout = best_fold*0.25
+    fold_sum = 0.0
+    drop = 0
+    print(f'Fold {best_fold}, Dropout: {best_dropout}): {best_val} %')
+
     correct = 0
     total = 0
+
     # since we're not training, we don't need to calculate the gradients for our outputs
     with torch.no_grad():
         for data in test_loader:
@@ -138,17 +150,6 @@ def main():
             correct += (predicted == labels).sum().item()
 
     print(f'Accuracy of the network on the test images: {100 * correct // total} %')
-
-    # Print fold results
-    print(f'K-FOLD CROSS VALIDATION RESULTS FOR {k_folds} FOLDS')
-    print('--------------------------------')
-    sum = 0.0
-    for key, value in results.items():
-        print(f'Fold {key}: {value} %')
-        sum += value
-    print(f'Average: {sum / len(results.items())} %')
-
-
 if __name__ == "__main__":
     main()
             
