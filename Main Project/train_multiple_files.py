@@ -5,6 +5,8 @@ from sklearn.neural_network import MLPClassifier
 paths = []
 done = False
 
+tex_type = input("GLCM or LBP? ")
+
 while not done:
     text = input('Please provide a file or type "done" to start training: ')
     if text == "done":
@@ -18,7 +20,10 @@ for path in paths:
     df = pd.read_csv(path)
     print("Loaded data from " + path)
     
-    features = df[["h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4"]]
+    if tex_type.casefold() == "glcm":
+        features = df[["h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4"]]
+    else:
+        features = df[["h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4"]]
     labels = df['label']
     
     clf_mlp.partial_fit(features, labels)
