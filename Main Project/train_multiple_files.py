@@ -23,7 +23,7 @@ for path in paths:
     if tex_type.casefold() == "glcm":
         features = df[["h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4"]]
     else:
-        features = df[["h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4"]]
+        features = df[["h","s","v","lbp1","lbp2","lbp3"]]
     labels = df['label']
     
     clf_mlp.partial_fit(features, labels)
