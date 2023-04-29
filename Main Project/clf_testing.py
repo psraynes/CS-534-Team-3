@@ -4,6 +4,10 @@ import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
 
 path = "C:/Users/Owner/Desktop/processed_data/CCSC512Train.csv"
 path_test = "C:/Users/Owner/Desktop/processed_data/CCSC512Test.csv"
@@ -41,12 +45,18 @@ mlp_search = GridSearchCV(clf_mlp, mlp_grid, scoring='f1', n_jobs=-1, cv=5)
 # mlp_params = mlp_search.best_params_
 clf_mlp.fit(features, labels)
 mlp_score = clf_mlp.score(features_test, labels_test)
+mlp_pred_class = clf_mlp.predict(features_test)
 
 #clf_knn.fit(features, labels)
 
 #print("Nearest Neighbors Training Accuracy:", clf_knn.score(features, labels))
 
 print("Multi-Layer Perceptron Test Accuracy:", mlp_score)
+
+conf_mat = confusion_matrix(labels_test, mlp_pred_class)
+
+cm_display = ConfusionMatrixDisplay(conf_mat).plot()
+plt.show()
 
 # print(mlp_params)
 
