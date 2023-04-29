@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.neural_network import MLPClassifier
+from joblib import dump
 
 paths = []
 done = False
@@ -29,4 +30,9 @@ for path in paths:
     clf_mlp.partial_fit(features, labels)
     print("Finished fitting data from " + path)
     
-print("Finished fitting all data")
+print("Finished fitting all data, Saving model to file")
+
+filename = dump(clf_mlp, tex_type + "_model")
+print("Saved to file: " + filename)
+
+
