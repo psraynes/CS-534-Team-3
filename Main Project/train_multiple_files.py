@@ -18,9 +18,9 @@ while not done:
         paths.append(text)
 
 if tex_type.casefold() == "glcm":
-    clf_mlp = MLPClassifier(hidden_layer_sizes=(100, 50, 25, ))
+    clf_mlp = MLPClassifier(hidden_layer_sizes=(100, 40, 30,), activation='logistic')
 else:
-    clf_mlp = MLPClassifier(hidden_layer_sizes=(100, 50, 25, ))
+    clf_mlp = MLPClassifier(hidden_layer_sizes=(10,), activation='relu')
         
 for path in paths:
     df = pd.read_csv(path)
