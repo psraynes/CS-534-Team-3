@@ -246,7 +246,7 @@ def load_all_files_lbp():
     # Setup CSV output
     csv_file = open(output_name,'w')
     csv_writer = csv.writer(csv_file)
-    header = ["uid","h","s","v","lbp","label"]
+    header = ["uid","h","s","v","lbp1","lbp2","lbp3","label"]
     csv_writer.writerow(header)
     
     for file_name in image_file_name_map:
