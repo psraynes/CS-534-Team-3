@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import os
 import csv
-from skimage.feature import graycomatrix, graycoprops
+from skimage.feature import graycomatrix, graycoprops, local_binary_pattern
 
 IMAGE_SIZE = (512,512)
 
@@ -33,10 +33,10 @@ def load_mask(path, levels=False):
 ###
 # function to take in a path to a raw image, and return an array for the pixels.
 # For each pixel, the array at that location contains the HSV values well as the contrast 
-# and correlation for each of 4 directions
+# and correlation for each of 4 directions of GLCM
 
 ###
-def load_raw_image(path):
+def load_raw_image_glcm(path):
     picture = cv2.imread(path)
     
     # Resize the image to 512x512
@@ -85,12 +85,44 @@ def load_raw_image(path):
             
     return data
 
+
+###
+# function to take in a path to a raw image, and return an array for the pixels.
+# For each pixel, the array at that location contains the HSV values well as the contrast 
+# and correlation for each of 4 directions of GLCM
+
+###
+def load_raw_image_lbp(path):
+    picture = cv2.imread(path)
+    
+    # Resize the image to 512x512
+    resize_img = cv2.resize(picture, IMAGE_SIZE, interpolation=cv2.INTER_AREA)
+
+    # convert to hsv and grayscale
+    hsv_img = cv2.cvtColor(resize_img, cv2.COLOR_BGR2HSV)
+    grayscale_img = cv2.cvtColor(resize_img, cv2.COLOR_BGR2GRAY)
+
+    # Create LBP data, multiple radius' allows us to better quantify the texture
+    lbp1_img = local_binary_pattern(grayscale_img,8,1)
+    lbp2_img = local_binary_pattern(grayscale_img,16,2)
+    lbp3_img = local_binary_pattern(grayscale_img,24,3)
+    
+    # Combine HSV and LBP data into one object
+    data = np.empty(shape=(hsv_img.shape[0],hsv_img.shape[1],6))
+
+    for x in range(hsv_img.shape[0]):
+        for y in range(hsv_img.shape[1]):
+            data[x][y] = np.append(hsv_img[x][y], [lbp1_img[x][y], lbp2_img[x][y], lbp3_img[x][y]])
+            
+    return data
+
 ###
 # function to ask the user for the image and mask directories, then load the files
 # Returns a 2d array containing a unique row for each pixel in all the images scaled to IMAGE_SIZE
+# Loads the GLCM data for the image
 
 ###
-def load_all_files():
+def load_all_files_glcm():
     image_folder = input("Please provide the directory containing the images: ")
     mask_folder = input("Please provide the directory containing the masks: ")
     output_name = input("Please name the output file: ")
@@ -143,7 +175,83 @@ def load_all_files():
     
     for file_name in image_file_name_map:
         if file_name not in missing_masks:
-            raw_data = load_raw_image(image_folder + file_name + image_file_name_map[file_name])
+            raw_data = load_raw_image_glcm(image_folder + file_name + image_file_name_map[file_name])
+            mask = load_mask(mask_folder + file_name + mask_file_name_map[file_name])
+            
+            for x in range(IMAGE_SIZE[0]):
+                for y in range(IMAGE_SIZE[1]):
+                    uid = file_name + "x" + str(x) + "y" + str(y) # Generate a unique id for this pixel
+                    data_row = [uid]
+                    data_row.extend(raw_data[x][y].tolist()) # Add the raw data to the list
+                    data_row.append(mask[x][y]) # Add the mask data to the list
+                    
+                    csv_writer.writerow(data_row)
+                    csv_file.flush()
+           
+    csv_file.close()         
+    return
+
+
+###
+# function to ask the user for the image and mask directories, then load the files
+# Returns a 2d array containing a unique row for each pixel in all the images scaled to IMAGE_SIZE
+# Loads the LBP data for the image
+
+###
+def load_all_files_lbp():
+    image_folder = input("Please provide the directory containing the images: ")
+    mask_folder = input("Please provide the directory containing the masks: ")
+    output_name = input("Please name the output file: ")
+    
+    # Replace \ with /
+    image_folder = image_folder.replace("\\","/")
+    mask_folder = mask_folder.replace("\\","/")
+    
+    # Add / if its missing from directory
+    if not (image_folder.endswith("/") or image_folder.endswith("\\")):
+        image_folder = image_folder + "/"
+    if not (mask_folder.endswith("/") or mask_folder.endswith("\\")):
+        mask_folder = mask_folder + "/"
+        
+    # List all files in both directories
+    image_file_names = os.listdir(image_folder)
+    mask_file_names = os.listdir(mask_folder)
+    
+    # Separate the names from the extensions and determine which are missing
+    image_file_name_map = {}
+    mask_file_name_map = {}
+    missing_images = []
+    
+    for file_name in image_file_names:
+        (name, ext) = os.path.splitext(file_name)
+        image_file_name_map.update({name: ext})
+        
+    for file_name in mask_file_names:
+        (name, ext) = os.path.splitext(file_name)
+        if name not in image_file_name_map.keys():
+            missing_images.append(name)
+        else:
+            mask_file_name_map.update({name: ext})
+    
+    missing_masks = set(image_file_name_map.keys()).difference(set(mask_file_name_map.keys()))
+    
+    if len(missing_masks) > 0:
+        print("The following files do not have masks, omitting them from load:")
+        print(missing_masks)
+    
+    if len(missing_images) > 0:
+        print("The following masks do not have files, omitting them from load:")
+        print(missing_images)
+        
+    # Setup CSV output
+    csv_file = open(output_name,'w')
+    csv_writer = csv.writer(csv_file)
+    header = ["uid","h","s","v","lbp","label"]
+    csv_writer.writerow(header)
+    
+    for file_name in image_file_name_map:
+        if file_name not in missing_masks:
+            raw_data = load_raw_image_lbp(image_folder + file_name + image_file_name_map[file_name])
             mask = load_mask(mask_folder + file_name + mask_file_name_map[file_name])
             
             for x in range(IMAGE_SIZE[0]):
