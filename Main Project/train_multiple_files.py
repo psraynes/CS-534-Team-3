@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 from sklearn.neural_network import MLPClassifier
+from joblib import dump
+import time
+import math
 
 paths = []
 done = False
@@ -13,8 +16,11 @@ while not done:
         done = True
     else:
         paths.append(text)
-        
-clf_mlp = MLPClassifier(hidden_layer_sizes=(100, 40, 30, ), max_iter=1000, activation='logistic')
+
+if tex_type.casefold() == "glcm":
+    clf_mlp = MLPClassifier(hidden_layer_sizes=(100, 40, 30,), activation='logistic')
+else:
+    clf_mlp = MLPClassifier(hidden_layer_sizes=(10,), activation='relu')
         
 for path in paths:
     df = pd.read_csv(path)
@@ -29,4 +35,9 @@ for path in paths:
     clf_mlp.partial_fit(features, labels)
     print("Finished fitting data from " + path)
     
-print("Finished fitting all data")
+print("Finished fitting all data, Saving model to file")
+
+filename = dump(clf_mlp, tex_type + str(math.floor(time.time())) + ".model")
+print("Saved to file: " + filename)
+
+
