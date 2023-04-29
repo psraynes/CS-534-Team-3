@@ -18,7 +18,7 @@ while not done:
         paths.append(text)
 
 if tex_type.casefold() == "glcm":
-    clf_mlp = MLPClassifier(hidden_layer_sizes=(100, 40, 30,), activation='logistic')
+    clf_mlp = MLPClassifier(hidden_layer_sizes=(100, 40, 30,), max_iter=1000, activation='logistic')
 else:
     clf_mlp = MLPClassifier(hidden_layer_sizes=(10,), activation='relu')
         
