@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.neural_network import MLPClassifier
 from joblib import dump
+import time
 
 paths = []
 done = False
@@ -32,7 +33,7 @@ for path in paths:
     
 print("Finished fitting all data, Saving model to file")
 
-filename = dump(clf_mlp, tex_type + "_model")
+filename = dump(clf_mlp, tex_type + str(time.time()) + ".model")
 print("Saved to file: " + filename)
 
 
