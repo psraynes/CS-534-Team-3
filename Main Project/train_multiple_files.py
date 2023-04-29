@@ -14,7 +14,7 @@ while not done:
     else:
         paths.append(text)
         
-clf_mlp = MLPClassifier(hidden_layer_sizes=(100, 50, 25, ))
+clf_mlp = MLPClassifier(hidden_layer_sizes=(100, 40, 30, ), max_iter=1000, activation='logistic')
         
 for path in paths:
     df = pd.read_csv(path)
