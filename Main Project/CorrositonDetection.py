@@ -48,3 +48,5 @@ cv2.imshow('classified image',results_image_color)
 combined = cv2.addWeighted(image, 1, results_image_color, 0.75, 0)
 cv2.imshow('overlayed images',combined)
 cv2.waitKey(0)
+cv2.destroyAllWindows()
+
