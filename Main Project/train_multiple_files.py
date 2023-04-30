@@ -32,7 +32,7 @@ for path in paths:
         features = df[["h","s","v","lbp1","lbp2","lbp3"]]
     labels = df['label']
     
-    clf_mlp.partial_fit(features, labels)
+    clf_mlp.partial_fit(features, labels, classes=np.unique(labels))
     print("Finished fitting data from " + path)
     
 print("Finished fitting all data, Saving model to file")
