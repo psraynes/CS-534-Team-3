@@ -267,3 +267,10 @@ def load_all_files_lbp():
     csv_file.close()         
     return
 
+if __name__ == "__main__":
+    tex_type = input("Would you like to load with GLCM or LBP processing? ")
+
+    if tex_type.casefold() == "glcm":
+        load_all_files_glcm()
+    else:
+        load_all_files_lbp()
