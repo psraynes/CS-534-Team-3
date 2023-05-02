@@ -3,6 +3,7 @@ import numpy as np
 import os
 import csv
 from skimage.feature import graycomatrix, graycoprops, local_binary_pattern
+from tqdm import tqdm
 
 IMAGE_SIZE = (512,512)
 
@@ -173,6 +174,7 @@ def load_all_files_glcm():
     header = ["uid","h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4","label"]
     csv_writer.writerow(header)
     
+    progress_bar = tqdm(total=len(image_file_name_map))
     for file_name in image_file_name_map:
         if file_name not in missing_masks:
             raw_data = load_raw_image_glcm(image_folder + file_name + image_file_name_map[file_name])
@@ -187,6 +189,7 @@ def load_all_files_glcm():
                     
                     csv_writer.writerow(data_row)
                     csv_file.flush()
+        progress_bar.update(1)
            
     csv_file.close()         
     return
