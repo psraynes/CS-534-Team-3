@@ -169,10 +169,12 @@ def load_all_files_glcm():
         print(missing_images)
         
     # Setup CSV output
-    csv_file = open(output_name,'w')
+    csv_file = open(output_name + ".csv",'w')
     csv_writer = csv.writer(csv_file)
     header = ["uid","h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4","label"]
     csv_writer.writerow(header)
+    num_rows = 0
+    file_num = 1
     
     progress_bar = tqdm(total=len(image_file_name_map))
     for file_name in image_file_name_map:
@@ -189,6 +191,16 @@ def load_all_files_glcm():
                     
                     csv_writer.writerow(data_row)
                     csv_file.flush()
+                    num_rows = num_rows + 1
+                    
+                    if num_rows > 5000000:
+                        csv_file.close()
+                        file_num = file_num + 1
+                        csv_file = open(output_name + str(file_num) + ".csv",'w')
+                        csv_writer = csv.writer(csv_file)
+                        csv_writer.writerow(header)
+                        num_rows = 0
+                        
         progress_bar.update(1)
            
     csv_file.close()         
