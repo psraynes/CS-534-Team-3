@@ -2,9 +2,8 @@ Group Project 1/__pycache__/*
 */__pycache__/*
 .vscode/
 99.png
-CCSC512Test.csv
-CCSC512Train.csv
-MaVeCoDDHiRes.csv
-MaVeCoDDLoRes.csv
+*.csv
+*.zip
+*.model
 processed_data.zip
 Group Project 4/complete_mednode_dataset/*
