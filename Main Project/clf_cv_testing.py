@@ -33,11 +33,13 @@ df_test[
 down_sampled_df = df.sample(n=df.shape[0] // 512, random_state=534)
 
 features = down_sampled_df[
-    ["h", "s", "v", "lbp1", "lbp2", "lbp3", "con1", "cor1", "con2", "cor2", "con3", "cor3", "con4", "cor4"]]
+    ["h", "s", "v", "lbp1", "lbp2", "lbp3"#, "con1", "cor1", "con2", "cor2", "con3", "cor3", "con4", "cor4"
+     ]]
 labels = down_sampled_df['label']
 
 features_test = df_test[
-    ["h", "s", "v", "lbp1", "lbp2", "lbp3", "con1", "cor1", "con2", "cor2", "con3", "cor3", "con4", "cor4"]]
+    ["h", "s", "v", "lbp1", "lbp2", "lbp3"#, "con1", "cor1", "con2", "cor2", "con3", "cor3", "con4", "cor4"
+     ]]
 labels_test = df_test['label']
 print("Finally loaded the data!")
 
