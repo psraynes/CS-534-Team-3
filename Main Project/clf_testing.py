@@ -11,19 +11,19 @@ matplotlib.use('TkAgg')
 
 path = "C:/Users/Owner/Desktop/lbp_data/CCSC512Trainlbp.csv"
 path_test = "C:/Users/Owner/Desktop/lbp_data/CCSC512Testlbp.csv"
-path2 = "C:/Users/Owner/Desktop/glcm_data/CCSC512Train.csv"
-path_test2 = "C:/Users/Owner/Desktop/glcm_data/CCSC512Test.csv"
+path2 = "C:/Users/willg/Documents/Grad School/Spring23/CS_534/CCSC512Train.csv"
+path_test2 = "C:/Users/willg/Documents/Grad School/Spring23/CS_534/CCSC512Test.csv"
 df_test = pd.read_csv(path_test2)
 df = pd.read_csv(path2)
 
-down_sampled_df = df.sample(n=df.shape[0]//512, random_state=534)
+down_sampled_df = df.sample(n=df.shape[0]//256, random_state=534)
 
 print("Finally loaded the data!")
 
 # features = down_sampled_df[["h","s","v","lbp1","lbp2","lbp3"]]
 # labels = down_sampled_df['label']
-features = df[["h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4"]]
-labels = df['label']
+features = down_sampled_df[["h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4"]]
+labels = down_sampled_df['label']
 
 features_test = df_test[["h","s","v","con1","cor1","con2","cor2","con3","cor3","con4","cor4"]]
 labels_test = df_test['label']
